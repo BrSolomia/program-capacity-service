@@ -1,0 +1,523 @@
+{
+  "id": "b08a5ff0-46e4-41ff-8a86-99017fe14fc0",
+  "prevId": "2953d312-9135-49cb-9801-a90d32a0ffbf",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.currencies": {
+      "name": "currencies",
+      "schema": "",
+      "columns": {
+        "code": {
+          "name": "code",
+          "type": "char(3)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "minor_units": {
+          "name": "minor_units",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "currencies_code_iso4217_chk": {
+          "name": "currencies_code_iso4217_chk",
+          "value": "\"currencies\".\"code\" ~ '^[A-Z]{3}$'"
+        },
+        "currencies_minor_units_non_negative_chk": {
+          "name": "currencies_minor_units_non_negative_chk",
+          "value": "\"currencies\".\"minor_units\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.programs": {
+      "name": "programs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credit_limit": {
+          "name": "credit_limit",
+          "type": "numeric(19, 4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserved_amount": {
+          "name": "reserved_amount",
+          "type": "numeric(19, 4)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "0"
+        },
+        "last_treasury_version": {
+          "name": "last_treasury_version",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_treasury_reconciled_at": {
+          "name": "last_treasury_reconciled_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_client_operation_number": {
+          "name": "last_client_operation_number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "0"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "programs_code_key": {
+          "name": "programs_code_key",
+          "columns": [
+            {
+              "expression": "code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "programs_currency_fkey": {
+          "name": "programs_currency_fkey",
+          "tableFrom": "programs",
+          "columnsFrom": ["currency"],
+          "tableTo": "currencies",
+          "columnsTo": ["code"],
+          "onUpdate": "restrict",
+          "onDelete": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "programs_reserved_amount_non_negative_chk": {
+          "name": "programs_reserved_amount_non_negative_chk",
+          "value": "\"programs\".\"reserved_amount\" >= 0"
+        },
+        "programs_credit_limit_non_negative_chk": {
+          "name": "programs_credit_limit_non_negative_chk",
+          "value": "\"programs\".\"credit_limit\" >= 0"
+        },
+        "programs_currency_iso4217_chk": {
+          "name": "programs_currency_iso4217_chk",
+          "value": "\"programs\".\"currency\" ~ '^[A-Z]{3}$'"
+        },
+        "programs_last_client_operation_number_non_negative_chk": {
+          "name": "programs_last_client_operation_number_non_negative_chk",
+          "value": "\"programs\".\"last_client_operation_number\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.invoices": {
+      "name": "invoices",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_id": {
+          "name": "program_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(19, 4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "invoices_id_program_id_key": {
+          "name": "invoices_id_program_id_key",
+          "columns": [
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "program_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "invoices_program_id_external_id_key": {
+          "name": "invoices_program_id_external_id_key",
+          "columns": [
+            {
+              "expression": "program_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "invoices_program_id_fkey": {
+          "name": "invoices_program_id_fkey",
+          "tableFrom": "invoices",
+          "columnsFrom": ["program_id"],
+          "tableTo": "programs",
+          "columnsTo": ["id"],
+          "onUpdate": "restrict",
+          "onDelete": "restrict"
+        },
+        "invoices_currency_fkey": {
+          "name": "invoices_currency_fkey",
+          "tableFrom": "invoices",
+          "columnsFrom": ["currency"],
+          "tableTo": "currencies",
+          "columnsTo": ["code"],
+          "onUpdate": "restrict",
+          "onDelete": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "invoices_amount_positive_chk": {
+          "name": "invoices_amount_positive_chk",
+          "value": "\"invoices\".\"amount\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.reservations": {
+      "name": "reservations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_id": {
+          "name": "program_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_id": {
+          "name": "invoice_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserved_amount": {
+          "name": "reserved_amount",
+          "type": "numeric(19, 4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_to_program_fx_rate": {
+          "name": "invoice_to_program_fx_rate",
+          "type": "numeric(24, 12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "reservation_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "reserve_client_operation_number": {
+          "name": "reserve_client_operation_number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "release_client_operation_number": {
+          "name": "release_client_operation_number",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "released_by": {
+          "name": "released_by",
+          "type": "reservation_actor",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "released_at": {
+          "name": "released_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "reservation_actor",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "reservations_invoice_id_key": {
+          "name": "reservations_invoice_id_key",
+          "columns": [
+            {
+              "expression": "invoice_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "reservations_program_id_reserve_client_operation_number_key": {
+          "name": "reservations_program_id_reserve_client_operation_number_key",
+          "columns": [
+            {
+              "expression": "program_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "reserve_client_operation_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "reservations_program_id_release_client_operation_number_key": {
+          "name": "reservations_program_id_release_client_operation_number_key",
+          "columns": [
+            {
+              "expression": "program_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "release_client_operation_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "reservations_program_id_status_idx": {
+          "name": "reservations_program_id_status_idx",
+          "columns": [
+            {
+              "expression": "program_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "reservations_program_id_fkey": {
+          "name": "reservations_program_id_fkey",
+          "tableFrom": "reservations",
+          "columnsFrom": ["program_id"],
+          "tableTo": "programs",
+          "columnsTo": ["id"],
+          "onUpdate": "restrict",
+          "onDelete": "restrict"
+        },
+        "reservations_invoice_id_program_id_fkey": {
+          "name": "reservations_invoice_id_program_id_fkey",
+          "tableFrom": "reservations",
+          "columnsFrom": ["invoice_id", "program_id"],
+          "tableTo": "invoices",
+          "columnsTo": ["id", "program_id"],
+          "onUpdate": "restrict",
+          "onDelete": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "reservations_reserved_amount_positive_chk": {
+          "name": "reservations_reserved_amount_positive_chk",
+          "value": "\"reservations\".\"reserved_amount\" > 0"
+        },
+        "reservations_invoice_to_program_fx_rate_positive_chk": {
+          "name": "reservations_invoice_to_program_fx_rate_positive_chk",
+          "value": "\"reservations\".\"invoice_to_program_fx_rate\" > 0"
+        },
+        "reservations_released_at_matches_status_chk": {
+          "name": "reservations_released_at_matches_status_chk",
+          "value": "(\"reservations\".\"status\" = 'RELEASED') = (\"reservations\".\"released_at\" IS NOT NULL)"
+        },
+        "reservations_released_by_matches_status_chk": {
+          "name": "reservations_released_by_matches_status_chk",
+          "value": "(\"reservations\".\"status\" = 'RELEASED') = (\"reservations\".\"released_by\" IS NOT NULL)"
+        },
+        "reservations_reserve_op_number_matches_created_by_chk": {
+          "name": "reservations_reserve_op_number_matches_created_by_chk",
+          "value": "(\"reservations\".\"created_by\" = 'CLIENT') = (\"reservations\".\"reserve_client_operation_number\" IS NOT NULL)"
+        },
+        "reservations_release_op_number_matches_released_by_chk": {
+          "name": "reservations_release_op_number_matches_released_by_chk",
+          "value": "COALESCE(\"reservations\".\"released_by\" = 'CLIENT', false) = (\"reservations\".\"release_client_operation_number\" IS NOT NULL)"
+        },
+        "reservations_client_operation_numbers_positive_chk": {
+          "name": "reservations_client_operation_numbers_positive_chk",
+          "value": "\"reservations\".\"reserve_client_operation_number\" >= 1 AND \"reservations\".\"release_client_operation_number\" >= 1"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.reservation_actor": {
+      "name": "reservation_actor",
+      "schema": "public",
+      "values": ["CLIENT", "TREASURY"]
+    },
+    "public.reservation_status": {
+      "name": "reservation_status",
+      "schema": "public",
+      "values": ["ACTIVE", "RELEASED"]
+    }
+  },
+  "schemas": {},
+  "views": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

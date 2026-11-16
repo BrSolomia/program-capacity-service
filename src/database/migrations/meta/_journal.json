@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794585847933,
+      "tag": "0000_create_currencies",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794585968953,
+      "tag": "0001_create_programs",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794585999156,
+      "tag": "0002_create_invoices",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794586025654,
+      "tag": "0003_create_reservations",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794825181337,
+      "tag": "0004_seed_currencies",
+      "breakpoints": true
+    }
+  ]
+}
